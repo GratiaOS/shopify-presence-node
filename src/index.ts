@@ -18,8 +18,12 @@ app.get('/api/identity', getIdentity);
 app.post('/api/respond', respond);
 app.post('/api/configure/identity', configureIdentity);
 
+const docsPath = path.resolve(__dirname, '../docs/shopify');
+app.use('/admin/docs', express.static(docsPath));
+
 const adminDistPath = path.resolve(__dirname, '../admin/dist');
 app.use('/admin', express.static(adminDistPath));
+app.use(express.static(adminDistPath));
 app.get('/', (_req, res) => {
   res.sendFile(path.join(adminDistPath, 'index.html'));
 });

@@ -115,8 +115,20 @@ export default function IdentityPage() {
 
   return (
     <div style={{ padding: 24, maxWidth: 720, margin: '0 auto', fontFamily: 'system-ui, sans-serif' }}>
-      <h1>Identity Layer</h1>
-      <p style={{ color: '#555' }}>Configure tone, rituals, and guardrails for this shop.</p>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+        <div>
+          <h1 style={{ margin: 0 }}>Identity Layer</h1>
+          <p style={{ color: '#555', margin: '4px 0 0' }}>Configure tone, rituals, and guardrails for this shop.</p>
+        </div>
+        <a
+          href="/admin/docs/presence-node-for-merchants.md"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontSize: 12, textDecoration: 'none', color: '#2563eb' }}
+        >
+          Help: How Presence Nodes Work →
+        </a>
+      </header>
 
       {isNew && (
         <div

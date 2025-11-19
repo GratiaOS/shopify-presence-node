@@ -27,6 +27,12 @@ This repository implements the Shopify Presence Node described in `docs/shopify-
 
 See `docs/shopify-presence-node.md` for the full spec.
 
+## Merchant Resources
+
+- **Presence Node Guide (for merchants)**  
+  `docs/shopify/presence-node-for-merchants.md`  
+  Merchant-facing overview covering Identity setup, Support-mode, Merchant-Codex-mode, and testing flows inside Shopify Admin.
+
 ## Development
 
 ```bash
