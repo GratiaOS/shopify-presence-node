@@ -10,6 +10,8 @@ export async function configureIdentity(req: Request, res: Response) {
       return res.status(400).json({ error: 'Missing shopId in identity layer' });
     }
 
+    identity.updatedAt = new Date().toISOString();
+
     await identityStore.upsert(identity);
     return res.json({ ok: true });
   } catch (err) {

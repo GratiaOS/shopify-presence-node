@@ -5,6 +5,7 @@ dotenv.config();
 export const config = {
   port: Number(process.env.PORT ?? 4000),
   openAiApiKey: process.env.OPENAI_API_KEY ?? '',
+  devShopId: process.env.DEV_SHOP_ID ?? 'test-shop',
 };
 
 if (!config.openAiApiKey) {
