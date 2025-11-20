@@ -1,0 +1,37 @@
+:root {
+  --g-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', sans-serif;
+
+  --g-bg: #070b10;
+  --g-bg-elevated: #0f1724;
+  --g-bg-soft: #111827;
+
+  --g-border-subtle: rgba(148, 163, 184, 0.35);
+  --g-border-strong: rgba(148, 163, 184, 0.7);
+
+  --g-text-main: #e5e7eb;
+  --g-text-soft: #9ca3af;
+  --g-text-quiet: #6b7280;
+
+  --g-accent: #34d399;
+  --g-accent-soft: rgba(52, 211, 153, 0.14);
+  --g-accent-strong: #22c55e;
+
+  --g-radius-lg: 18px;
+  --g-radius-md: 12px;
+  --g-radius-sm: 8px;
+
+  --g-shadow-soft: 0 18px 60px rgba(15, 23, 42, 0.55);
+  --g-shadow-subtle: 0 10px 35px rgba(15, 23, 42, 0.35);
+
+  --g-gap-lg: 24px;
+  --g-gap-md: 16px;
+  --g-gap-sm: 10px;
+
+  --g-transition-fast: 150ms ease-out;
+}
+
+body {
+  font-family: var(--g-font-sans);
+  background: radial-gradient(circle at top left, #0b1220 0, #020617 55%);
+  color: var(--g-text-main);
+}

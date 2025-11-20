@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import type { IdentityLayer } from '../types';
 import { api } from '../lib/api';
+import { Page } from '../garden-ui/Page';
+import { Card } from '../garden-ui/Card';
+import { Section } from '../garden-ui/Section';
+import { Field, TextInput, TextArea } from '../garden-ui/Field';
+import { Button } from '../garden-ui/Button';
 
 type IdentityResponse = {
   identity: IdentityLayer;
@@ -15,9 +20,10 @@ export default function IdentityPage() {
   const [loading, setLoading] = useState(true);
   const [identity, setIdentity] = useState<IdentityLayer | null>(null);
   const [isNew, setIsNew] = useState(false);
-  const [testReply, setTestReply] = useState('');
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
+  const [testMessage, setTestMessage] = useState('How long does shipping to France usually take?');
+  const [testReply, setTestReply] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -61,10 +67,7 @@ export default function IdentityPage() {
     if (!identity) return;
     setSaving(true);
     setError(null);
-    const payload: IdentityLayer = {
-      ...identity,
-      updatedAt: new Date().toISOString(),
-    };
+    const payload: IdentityLayer = { ...identity, updatedAt: new Date().toISOString() };
     try {
       await api.post('/configure/identity', payload);
       setIdentity(payload);
@@ -88,7 +91,7 @@ export default function IdentityPage() {
         mode: 'support',
         payload: {
           channel: 'chat',
-          customerMessage: 'How long does shipping to France usually take?',
+          customerMessage: testMessage,
         },
       });
       setTestReply(res.reply);
@@ -101,162 +104,151 @@ export default function IdentityPage() {
   };
 
   if (loading) {
-    return <div style={{ padding: 24 }}>Loading…</div>;
+    return (
+      <Page title="Shopify Presence Node" subtitle="Configure identity and test replies in your Garden voice.">
+        <Card>
+          <p>Loading…</p>
+        </Card>
+      </Page>
+    );
   }
 
   if (!identity) {
     return (
-      <div style={{ padding: 24 }}>
-        <p>Unable to load identity.</p>
-        {error && <p style={{ color: '#b00' }}>{error}</p>}
-      </div>
+      <Page title="Shopify Presence Node" subtitle="Configure identity and test replies in your Garden voice.">
+        <Card title="Unable to load identity">
+          <p>We couldn\'t load this shop\'s Identity Layer.</p>
+          {error && <p style={{ color: '#f87171' }}>{error}</p>}
+        </Card>
+      </Page>
     );
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 720, margin: '0 auto', fontFamily: 'system-ui, sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
-        <div>
-          <h1 style={{ margin: 0 }}>Identity Layer</h1>
-          <p style={{ color: '#555', margin: '4px 0 0' }}>Configure tone, rituals, and guardrails for this shop.</p>
-        </div>
-        <a
-          href="/admin/docs/presence-node-for-merchants.md"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ fontSize: 12, textDecoration: 'none', color: '#2563eb' }}
+    <Page
+      title="Shopify Presence Node"
+      subtitle="Configure identity and test replies in your Garden voice."
+      rightSlot={
+        <Button
+          variant="ghost"
+          type="button"
+          onClick={() => window.open('/admin/docs/presence-node-for-merchants.md', '_blank', 'noopener,noreferrer')}
         >
-          Help: How Presence Nodes Work →
-        </a>
-      </header>
-
-      {isNew && (
-        <div
-          style={{
-            padding: 12,
-            background: '#fffae8',
-            border: '1px solid #ead188',
-            borderRadius: 8,
-            margin: '16px 0',
-          }}
-        >
-          <strong>New identity detected.</strong> Update the defaults and save to personalize.
-        </div>
-      )}
-
+          Help: Presence Node →
+        </Button>
+      }
+    >
       {error && (
-        <div style={{ margin: '12px 0', color: '#b00' }}>
-          Error: {error}
-        </div>
+        <Card>
+          <p style={{ color: '#f87171', margin: 0 }}>Error: {error}</p>
+        </Card>
+      )}
+      {isNew && (
+        <Card>
+          <strong>New identity detected.</strong> Update the defaults and save to personalize this Presence Node.
+        </Card>
       )}
 
-      <section style={{ marginTop: 20 }}>
-        <h2>Tone</h2>
-        <label style={{ display: 'block', marginBottom: 8 }}>
-          Style
-          <input
-            value={identity.tone.style}
-            onChange={(event) => updateField('tone.style', event.target.value)}
-            style={{ width: '100%', padding: 8, marginTop: 4 }}
-          />
-        </label>
-        <label style={{ display: 'block', marginBottom: 8 }}>
-          Formality
-          <input
-            value={identity.tone.formality}
-            onChange={(event) => updateField('tone.formality', event.target.value)}
-            style={{ width: '100%', padding: 8, marginTop: 4 }}
-          />
-        </label>
-        <label style={{ display: 'block', marginBottom: 8 }}>
-          Length
-          <input
-            value={identity.tone.length}
-            onChange={(event) => updateField('tone.length', event.target.value)}
-            style={{ width: '100%', padding: 8, marginTop: 4 }}
-          />
-        </label>
-      </section>
-
-      <section style={{ marginTop: 24 }}>
-        <h2>Rituals</h2>
-        <label style={{ display: 'block', marginBottom: 8 }}>
-          Greeting
-          <input
-            value={identity.rituals.greeting ?? ''}
-            onChange={(event) => updateField('rituals.greeting', event.target.value)}
-            style={{ width: '100%', padding: 8, marginTop: 4 }}
-          />
-        </label>
-        <label style={{ display: 'block', marginBottom: 8 }}>
-          Closing
-          <input
-            value={identity.rituals.closing ?? ''}
-            onChange={(event) => updateField('rituals.closing', event.target.value)}
-            style={{ width: '100%', padding: 8, marginTop: 4 }}
-          />
-        </label>
-        <label style={{ display: 'block', marginBottom: 8 }}>
-          Fallback
-          <input
-            value={identity.rituals.fallback ?? ''}
-            onChange={(event) => updateField('rituals.fallback', event.target.value)}
-            style={{ width: '100%', padding: 8, marginTop: 4 }}
-          />
-        </label>
-      </section>
-
-      <button
-        type="button"
-        onClick={saveIdentity}
-        disabled={saving}
+      <div
         style={{
-          marginTop: 24,
-          padding: '10px 16px',
-          borderRadius: 4,
-          border: 'none',
-          background: saving ? '#999' : '#111',
-          color: '#fff',
-          cursor: 'pointer',
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 2.1fr) minmax(0, 1fr)',
+          gap: 20,
+          alignItems: 'flex-start',
         }}
       >
-        {saving ? 'Saving…' : 'Save Identity'}
-      </button>
-
-      <hr style={{ margin: '40px 0' }} />
-
-      <section>
-        <h2>Test Support Mode</h2>
-        <p style={{ color: '#555' }}>Run the active identity through Support-mode.</p>
-        <button
-          type="button"
-          onClick={runTest}
-          disabled={testing}
-          style={{
-            padding: '10px 16px',
-            borderRadius: 4,
-            border: 'none',
-            background: testing ? '#999' : '#111',
-            color: '#fff',
-            cursor: 'pointer',
-          }}
+        <Card
+          title="Identity"
+          description="Tone, rituals, and guardrails for this shop."
+          footer={
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+              <span style={{ fontSize: 12, color: 'var(--g-text-quiet)' }}>
+                Last updated {new Date(identity.updatedAt).toLocaleString()}
+              </span>
+              <Button onClick={saveIdentity} disabled={saving} style={{ minWidth: 140 }}>
+                {saving ? 'Saving…' : 'Save identity'}
+              </Button>
+            </div>
+          }
         >
-          {testing ? 'Testing…' : 'Run test'}
-        </button>
-        {testReply && (
-          <pre
-            style={{
-              background: '#f6f6f6',
-              padding: 12,
-              borderRadius: 8,
-              marginTop: 16,
-              whiteSpace: 'pre-wrap',
-            }}
-          >
-            {testReply}
-          </pre>
-        )}
-      </section>
-    </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <Section title="Tone">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 12 }}>
+                <Field label="Style">
+                  <TextInput value={identity.tone.style} onChange={(event) => updateField('tone.style', event.target.value)} />
+                </Field>
+                <Field label="Formality">
+                  <TextInput value={identity.tone.formality} onChange={(event) => updateField('tone.formality', event.target.value)} />
+                </Field>
+                <Field label="Length">
+                  <TextInput value={identity.tone.length} onChange={(event) => updateField('tone.length', event.target.value)} />
+                </Field>
+              </div>
+            </Section>
+
+            <Section title="Rituals" description="Greeting, closing, and fallback response.">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <Field label="Greeting">
+                  <TextInput value={identity.rituals.greeting ?? ''} onChange={(event) => updateField('rituals.greeting', event.target.value)} />
+                </Field>
+                <Field label="Closing">
+                  <TextInput value={identity.rituals.closing ?? ''} onChange={(event) => updateField('rituals.closing', event.target.value)} />
+                </Field>
+                <Field label="Fallback">
+                  <TextInput value={identity.rituals.fallback ?? ''} onChange={(event) => updateField('rituals.fallback', event.target.value)} />
+                </Field>
+              </div>
+            </Section>
+
+            <Section title="Policies">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <Field label="Shipping">
+                  <TextArea value={identity.policies.shipping ?? ''} onChange={(event) => updateField('policies.shipping', event.target.value)} />
+                </Field>
+                <Field label="Refund">
+                  <TextArea value={identity.policies.refund ?? ''} onChange={(event) => updateField('policies.refund', event.target.value)} />
+                </Field>
+                <Field label="Support hours">
+                  <TextInput
+                    value={identity.policies.customer_support_hours ?? ''}
+                    onChange={(event) => updateField('policies.customer_support_hours', event.target.value)}
+                  />
+                </Field>
+              </div>
+            </Section>
+          </div>
+        </Card>
+
+        <Card
+          title="Test Support reply"
+          description="Run a sample customer question through Support-mode."
+          footer={
+            <Button onClick={runTest} disabled={testing} style={{ minWidth: 120 }}>
+              {testing ? 'Testing…' : 'Run test'}
+            </Button>
+          }
+        >
+          <Section title="Customer message">
+            <TextArea value={testMessage} onChange={(event) => setTestMessage(event.target.value)} rows={4} />
+          </Section>
+          {testReply && (
+            <Section title="Reply" description="Raw output shaped by Identity + Support-mode.">
+              <div
+                style={{
+                  background: 'var(--g-bg-soft)',
+                  borderRadius: 'var(--g-radius-md)',
+                  padding: 12,
+                  border: `1px solid var(--g-border-subtle)`,
+                  whiteSpace: 'pre-wrap',
+                  fontSize: 13,
+                }}
+              >
+                {testReply}
+              </div>
+            </Section>
+          )}
+        </Card>
+      </div>
+    </Page>
   );
 }
